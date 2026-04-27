@@ -1,3 +1,9 @@
+def api_root(request):
+    return JsonResponse({
+        "activities": f"{base_url}/api/activities/",
+        # Dodaj tu kolejne endpointy w przyszłości
+    })
+
 """octofit_tracker URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -15,7 +21,20 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.http import JsonResponse
+import os
+
+CODESPACE_NAME = os.environ.get('CODESPACE_NAME')
+if CODESPACE_NAME:
+    base_url = f"https://{CODESPACE_NAME}-8000.app.github.dev"
+else:
+    base_url = "http://localhost:8000"
+
+def activities_view(request):
+    return JsonResponse({"message": f"Activities endpoint. Base URL: {base_url}/api/activities/"})
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/', api_root, name='api-root'),
+    path('api/activities/', activities_view, name='activities'),
 ]
